@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <label>Your ID:</label>
+    <textarea id="yourId"></textarea>
+    <button id="publish" onclick="publishId()">Publish Your ID</button><br>
+
+    <button id="connect" onclick="connect()">Connect</button><br/>
+
+    <label>Secret</label>
+    <textarea id="secret"></textarea>
+    <button id="send" onclick="sendSecret()">Send</button>
+
+    <script src="http://cdn.peerjs.com/0.3/peer.js"></script>
+    <script
+    src="http://code.jquery.com/jquery-3.2.1.min.js"
+    integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+    crossorigin="anonymous"></script>
+      
+    <script>
+        var peer = null;
+        var conn = null;
+        var otherId = null;
+
+        function publishId() {
+            peer = new Peer($('#yourId').val(), {host: window.location.hostname, port: 9000, path: '/peerjs'});
+        }
+
+        function connect() {
+            $.get( "/user/random?except=" + $('#yourId').val(), function( data ) {
+                otherId = data
+
+                conn = peer.connect(otherId);
+            
+                conn.on('open', function(){
+                    console.log('Connection with: ' + otherId);
+                });
+
+                peer.on('connection', function(conn) {
+                    conn.on('data', function(data){
+                        console.log(data);
+                    });
+                }); 
+            });
+        }
+
+        function sendSecret() {
+            conn.send($('#secret').val())
+        }
+    </script>
+</body>
+</html>

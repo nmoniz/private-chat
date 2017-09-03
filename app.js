@@ -18,9 +18,9 @@ app.get('/user/random', function (req, res) {
 
     do {
         var randomPeer = peers[Math.floor(Math.random() * peers.length)];
-    } while(peers.length > 0 || randomPeer == req.param('except') || !maxRetries--)
+    } while(peers.length > 1 && randomPeer == req.query['except'] && !maxRetries--)
     
-    console.log(randomPeer)
+    console.log('Random peer: ' + randomPeer)
     res.send(randomPeer);
 })
 
